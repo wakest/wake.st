@@ -1,3 +1,2 @@
 theme: jekyll-theme-minimal
-include: [".well-known"]
-include: [".well-known/dat"]
+include: [".well-known", ".nojekyll", ".well-known/dat"]
