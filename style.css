@@ -3,6 +3,10 @@ body {
   background: white;
 }
 
+a{
+  text-decoration: none;
+}
+
 .webring{
   position: fixed;
   width: 30px;
