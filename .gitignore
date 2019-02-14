@@ -2,3 +2,5 @@ _site/
 .sass-cache/
 .jekyll-cache/
 .jekyll-metadata
+
+android-icon-144x144.png
