@@ -1,1 +1,2 @@
 2019-07-03T03:40:47-05:00	hopefully this works
+2019-07-03T03:44:28-05:00	cool working now I just have to figure out how to sync local file with the github hosted version
