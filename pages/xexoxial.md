@@ -3,5 +3,7 @@ title: Xexoxial
 ---
 
 ## artists published
-### Liaizon Wakest
+### [[Liaizon Wakest]]
+### [[Malok]]
+###
 ###
