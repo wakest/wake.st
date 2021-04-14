@@ -6,5 +6,6 @@ title: Xexoxial
 ### [[Liaizon Wakest]]
 ### [[Malok]]
 ### [[John M. Bennett]]
+### [[Colin Hinz]]
 ###
 ###
