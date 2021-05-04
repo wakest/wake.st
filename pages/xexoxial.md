@@ -10,6 +10,7 @@ title: Xexoxial
 ### [[mIEKAL aND]]
 ### [[Lyx Ish]]
 ### [[John Held Jr.]]
+### [[Bern Porter]]
 ###
 ## associated presses
 ### [[Autonomedia]]
