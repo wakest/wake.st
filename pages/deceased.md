@@ -2,5 +2,6 @@
 title: Deceased
 ---
 
-## [[Lyx Ish]]
+## [[Lyx Ish]] died in 2004
+## Bob Grumman died in...
 ##
