@@ -12,5 +12,5 @@ title: Xexoxial
 ### [[John Held Jr.]]
 ### [[Bern Porter]]
 ### [[Maria Damon]]
-## __**associated presses**__
+## __**associated presses**
 ### [[Autonomedia]]
