@@ -11,7 +11,7 @@ title: Xexoxial
 ### [[Lyx Ish]]
 ### [[John Held Jr.]]
 ### [[Bern Porter]]
-###
+### [[Maria Damon]]
 ## associated presses
 ### [[Autonomedia]]
 ###
