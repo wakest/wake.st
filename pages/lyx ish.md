@@ -1,5 +1,6 @@
 ---
 title: Lyx Ish
+filters: {"miekal and" true}
 ---
 
 ## born 1956
