@@ -11,4 +11,5 @@ title: Xexoxial
 ### [[Lyx Ish]]
 ### [[John Held Jr.]]
 ## associated presses
+### [[Autonomedia]]
 ###
