@@ -1,0 +1,6 @@
+---
+title: Deceased
+---
+
+## [[Lyx Ish]]
+##
