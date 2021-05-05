@@ -15,3 +15,4 @@ title: Xexoxial
 ## **associated presses**
 ### [[Autonomedia]]
 ## associated projects
+### [[Qwa Dogs In Paris]]
