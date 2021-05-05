@@ -11,4 +11,5 @@ title: Qwa Dogs In Paris
 ## Semantics Could Vanish
 ## The Driftless Academy of Botanical Apparitions
 ## Twa Dios Under Paris
+## Wisconsin Conservatory Of Noise
 ## Floating Concrete Octopus
