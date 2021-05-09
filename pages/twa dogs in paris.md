@@ -10,6 +10,6 @@ title: Twa Dogs In Paris
 ## Aquatics Ever Tarnish
 ## Semantics Could Vanish
 ## The Driftless Academy of Botanical Apparitions
-## Twa Dios Under Paris (some spelling mius)
+## Twa Dios Under Paris (some spelling mistake)
 ## Wisconsin Conservatory Of Noise
 ## Floating Concrete Octopus
