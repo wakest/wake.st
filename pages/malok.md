@@ -2,4 +2,4 @@
 title: Malok
 ---
 
-## [malok.org](https://malok.org) 
+[malok.org](https://malok.org)
