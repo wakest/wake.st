@@ -1,2 +1,1 @@
-- Why is this page here?
-  [[Xexoxial]]
+- [[Xexoxial]]
