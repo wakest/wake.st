@@ -12,6 +12,5 @@ title: Twa Dogs In Paris
 - The Driftless Academy of Botanical Apparitions
 - Twa Dios Under Paris (some spelling mistake)
 - Wisconsin Conservatory Of Noise
-  Floating Concrete Octopus
+- Floating Concrete Octopus
 - Floating Concrete Orchestra
--
