@@ -3,12 +3,12 @@ title: Xexoxial
 ---
 
 - **artists published**
-	- [[Liaizon Wakest]]
 	- [[mIEKAL aND]]
+	- [[Lyx Ish]]
+	- [[Liaizon Wakest]]
 	- [[Malok]]
 	- [[John M. Bennett]]
 	- [[Colin Hinz]]
-	- [[Lyx Ish]]
 	- [[John Held Jr.]]
 	- [[Bern Porter]]
 	- [[Maria Damon]]
