@@ -3,6 +3,7 @@ title: Xexoxial
 ---
 
 - **artists published**
+  collapsed:: true
 	- [[Liaizon Wakest]]
 	- [[Malok]]
 	- [[John M. Bennett]]
@@ -13,6 +14,7 @@ title: Xexoxial
 	- [[Bern Porter]]
 	- [[Maria Damon]]
 - **associated presses**
+  collapsed:: true
 	- [[Autonomedia]]
 - **associated projects**
 - [[Twa Dogs In Paris]]
