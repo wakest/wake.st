@@ -4,5 +4,3 @@ It's a normal page called [[Contents]], you can use it for:
 2. pinning/bookmarking favorites pages/blocks (e.g. [[Logseq]])
 3. You can also put many different things, depending on your personal workflow.
 [[Xexoxial]]
-
-- [[miekal and broken]]
