@@ -15,4 +15,4 @@ title: Xexoxial
 - **associated presses**
 	- [[Autonomedia]]
 - **associated projects**
-- [[Twa Dogs In Paris]]
+	- [[Twa Dogs In Paris]]
