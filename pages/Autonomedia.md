@@ -1,2 +1,2 @@
 - Jim Flemming
-- Peter Lamborn Wilson
+- [[Peter Lamborn Wilson]]
