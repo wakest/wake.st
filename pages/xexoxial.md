@@ -2,7 +2,7 @@
 title: Xexoxial
 ---
 
-- artists published
+- **artists published**
 	- [[Liaizon Wakest]]
 	- [[Malok]]
 	- [[John M. Bennett]]
