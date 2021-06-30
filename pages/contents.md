@@ -5,4 +5,4 @@ It's a normal page called [[Contents]], you can use it for:
 3. You can also put many different things, depending on your personal workflow.
 [[Xexoxial]]
 
-- [[miekal and]]
+- [[miekal and broken]]
