@@ -14,5 +14,6 @@ title: Xexoxial
 	- [[Maria Damon]]
 - **associated presses**
 	- [[Autonomedia]]
+	- blazeVOX
 - **associated projects**
 	- [[Twa Dogs In Paris]]
