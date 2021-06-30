@@ -7,10 +7,10 @@ title: Twa Dogs In Paris
 - Qwa Never Digs Parish
 - Twa Dogs In Paris
 	- Twå Dogs In Paris (1982)
+	- Twa Dios Under Paris (some spelling mistake)
 - Aquatics Ever Tarnish
 - Semantics Could Vanish
 - The Driftless Academy of Botanical Apparitions
-- Twa Dios Under Paris (some spelling mistake)
 - Wisconsin Conservatory Of Noise
 - Floating Concrete Octopus
 - Floating Concrete Orchestra
