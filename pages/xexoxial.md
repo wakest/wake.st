@@ -13,6 +13,6 @@ title: Xexoxial
 - [[Bern Porter]]
 - [[Maria Damon]]
 - **associated presses**
-- [[Autonomedia]]
+	- [[Autonomedia]]
 - associated projects
-- [[Twa Dogs In Paris]]
+	- [[Twa Dogs In Paris]]
