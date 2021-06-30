@@ -6,7 +6,7 @@ title: Twa Dogs In Paris
 - Qwa Digs Under Paris's
 - Qwa Never Digs Parish
 - Twa Dogs In Paris
-- Twå Dogs In Paris (1982)
+	- Twå Dogs In Paris (1982)
 - Aquatics Ever Tarnish
 - Semantics Could Vanish
 - The Driftless Academy of Botanical Apparitions
