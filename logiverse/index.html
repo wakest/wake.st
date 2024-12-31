@@ -1,0 +1,801 @@
+---
+
+title: Logarithm Logiverse Webview
+description: Login Webview
+
+---
+
+<h1>
+    Welcome to Logarithm
+    <a href="https://github.com/tristie/www/tree/main/logarithm" class="nolink" target="_blank">
+        <svg viewBox="0 0 256 250" fill="#fff" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+            <title>Source Code</title>
+            <path
+                d="M128.001 0C57.317 0 0 57.307 0 128.001c0 56.554 36.676 104.535 87.535 121.46 6.397 1.185 8.746-2.777 8.746-6.158 0-3.052-.12-13.135-.174-23.83-35.61 7.742-43.124-15.103-43.124-15.103-5.823-14.795-14.213-18.73-14.213-18.73-11.613-7.944.876-7.78.876-7.78 12.853.902 19.621 13.19 19.621 13.19 11.417 19.568 29.945 13.911 37.249 10.64 1.149-8.272 4.466-13.92 8.127-17.116-28.431-3.236-58.318-14.212-58.318-63.258 0-13.975 5-25.394 13.188-34.358-1.329-3.224-5.71-16.242 1.24-33.874 0 0 10.749-3.44 35.21 13.121 10.21-2.836 21.16-4.258 32.038-4.307 10.878.049 21.837 1.47 32.066 4.307 24.431-16.56 35.165-13.12 35.165-13.12 6.967 17.63 2.584 30.65 1.255 33.873 8.207 8.964 13.173 20.383 13.173 34.358 0 49.163-29.944 59.988-58.447 63.157 4.591 3.972 8.682 11.762 8.682 23.704 0 17.126-.148 30.91-.148 35.126 0 3.407 2.304 7.398 8.792 6.14C219.37 232.5 256 184.537 256 128.002 256 57.307 198.691 0 128.001 0Zm-80.06 182.34c-.282.636-1.283.827-2.194.39-.929-.417-1.45-1.284-1.15-1.922.276-.655 1.279-.838 2.205-.399.93.418 1.46 1.293 1.139 1.931Zm6.296 5.618c-.61.566-1.804.303-2.614-.591-.837-.892-.994-2.086-.375-2.66.63-.566 1.787-.301 2.626.591.838.903 1 2.088.363 2.66Zm4.32 7.188c-.785.545-2.067.034-2.86-1.104-.784-1.138-.784-2.503.017-3.05.795-.547 2.058-.055 2.861 1.075.782 1.157.782 2.522-.019 3.08Zm7.304 8.325c-.701.774-2.196.566-3.29-.49-1.119-1.032-1.43-2.496-.726-3.27.71-.776 2.213-.558 3.315.49 1.11 1.03 1.45 2.505.701 3.27Zm9.442 2.81c-.31 1.003-1.75 1.459-3.199 1.033-1.448-.439-2.395-1.613-2.103-2.626.301-1.01 1.747-1.484 3.207-1.028 1.446.436 2.396 1.602 2.095 2.622Zm10.744 1.193c.036 1.055-1.193 1.93-2.715 1.95-1.53.034-2.769-.82-2.786-1.86 0-1.065 1.202-1.932 2.733-1.958 1.522-.03 2.768.818 2.768 1.868Zm10.555-.405c.182 1.03-.875 2.088-2.387 2.37-1.485.271-2.861-.365-3.05-1.386-.184-1.056.893-2.114 2.376-2.387 1.514-.263 2.868.356 3.061 1.403Z" />
+        </svg>
+    </a>
+</h1>
+<p>
+    Webview of the <a href="https://logiverse.social/" target="_blank">Logiverse</a> that powers
+    <a href="https://todepond.com/lab/login" target="_blank">Login</a> by TodePond.
+    <br>
+</p>
+
+<form id="loginForm">
+    <label>
+        <b>Public username</b>
+        <input required class="cool-input" id="usernameInput" name="username" placeholder="...">
+    </label>
+    <label>
+        <b>Unsecure password</b>
+        <input required class="cool-input" id="passwordInput" name="password" placeholder="..." type="password">
+    </label>
+    <label>
+        <b>Instance</b>
+        <select id="instanceInput" class="cool-select">
+        </select>
+    </label>
+    <button class="cool-button">Login</button>
+</form>
+
+<form id="statusForm">
+    <label>
+        <h2>Status <small id="whoAmI"></small></h2>
+
+        <input required class="cool-input" placeholder="..." id="statusInput">
+    </label>
+    <div>
+        <button class="cool-button">Update status</button>
+        <!-- <button class="cool-button" type="button" id="updateWithGifButton">Update status with GIF</button> -->
+    </div>
+</form>
+
+<br>
+
+<details>
+    <summary>burger menu</summary>
+    <div>
+        <button class="cool-button" id="mcPlantButton">Eat McPlant</button>
+        <button class="cool-button" id="logoutButton">Logout</button>
+        <label class="cool-button" id="colorPickerLabel">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor">
+                <title>Open Custom Theme Color Picker</title>
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9.53 16.122a3 3 0 0 0-5.78 1.128 2.25 2.25 0 0 1-2.4 2.245 4.5 4.5 0 0 0 8.4-2.245c0-.399-.078-.78-.22-1.128Zm0 0a15.998 15.998 0 0 0 3.388-1.62m-5.043-.025a15.994 15.994 0 0 1 1.622-3.395m3.42 3.42a15.995 15.995 0 0 0 4.764-4.648l3.876-5.814a1.151 1.151 0 0 0-1.597-1.597L14.146 6.32a15.996 15.996 0 0 0-4.649 4.763m3.42 3.42a6.776 6.776 0 0 0-3.42-3.42" />
+            </svg>
+            <input type="color" id="colorPicker" value="#e66465" hidden />
+        </label>
+    </div>
+</details>
+
+<br>
+
+<header>
+    <div>
+        <h2 style="padding-bottom: 0;">Feed</h2>
+        <button id="refresh">&#x21bb;</button>
+    </div>
+
+    <label>
+        <input id="autoRefreshEnabled" type="checkbox" hidden>
+        Auto Refresh (<span id="autoRefreshCounter">5</span>)
+    </label>
+</header>
+
+<hr style="opacity: 0.1;">
+
+<ul id="feed">
+</ul>
+
+<div style="display: none" id="placeholderPost">
+    <li>
+        <h3 style="display: inline;">example username</h3>
+        <small style="opacity: 0.6;"><a target="_blank" style="text-decoration: none;"></a></small>
+        <span style="display: block; padding-block: .2em;">hello</span>
+        <img style="display: none;">
+        <div>
+            <button onclick="alert('glad you like it babe (!)')">
+                <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <path
+                            d="M1.24264 8.24264L8 15L14.7574 8.24264C15.553 7.44699 16 6.36786 16 5.24264V5.05234C16 2.8143 14.1857 1 11.9477 1C10.7166 1 9.55233 1.55959 8.78331 2.52086L8 3.5L7.21669 2.52086C6.44767 1.55959 5.28338 1 4.05234 1C1.8143 1 0 2.8143 0 5.05234V5.24264C0 6.36786 0.44699 7.44699 1.24264 8.24264Z"
+                            fill="currentColor"></path>
+                    </g>
+                </svg>
+            </button>
+            <time></time>
+        </div>
+        <hr>
+    </li>
+</div>
+
+<script type="module">
+
+    import { config } from './logiverse.js'
+
+    globalThis.devMode = false
+
+    let DATE_OFFSET = new Date().getTimezoneOffset() * 60000
+    let loggedIn = JSON.parse(localStorage.getItem('login'))
+    let autoRefresh = localStorage.getItem('autoRefresh') !== 'false'
+
+    let autoRefreshInterval
+    let autoRefreshCount = 5
+
+    let cachedNames = new Set()
+    let cachedNamesWithSpaces = new Set()
+
+    const units = {
+        year: 24 * 60 * 60 * 1000 * 365,
+        month: 24 * 60 * 60 * 1000 * 365 / 12,
+        day: 24 * 60 * 60 * 1000,
+        hour: 60 * 60 * 1000,
+        minute: 60 * 1000,
+        second: 1000
+    }
+
+    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' })
+
+    function getRelativeTime(d1, d2 = new Date()) {
+        let elapsed = d1 - d2
+
+        for (var u in units)
+            if (Math.abs(elapsed) > units[u] || u == 'second')
+                return rtf.format(Math.round(elapsed / units[u]), u)
+    }
+
+    if (localStorage.getItem('color')) {
+        document.documentElement.style.cssText = `--primary: ${localStorage.getItem('color')}`
+        document.getElementById('colorPicker').value = localStorage.getItem('color')
+    }
+
+    if (loggedIn?.username && loggedIn?.password && loggedIn?.instance) {
+
+        await loginUsing({
+            username: loggedIn.username,
+            password: loggedIn?.password,
+            instance: loggedIn?.instance
+        })
+
+    } else {
+
+        statusForm.style.display = 'none'
+        for (let instance of config.instances) {
+            if (!instance.endpoints.login || !instance.endpoints.update) continue
+
+            const instanceOption = document.createElement('option')
+
+            instanceOption.value = instance.name
+            instanceOption.innerText = instance.name
+
+            instanceInput.append(instanceOption)
+        }
+
+        fetchFeed()
+    }
+
+
+    if (autoRefresh) startAutoRefresh()
+    else autoRefreshCounter.innerText = 'paused'
+
+    autoRefreshEnabled.checked = autoRefresh
+
+    function startAutoRefresh() {
+        autoRefreshCount = 5
+        autoRefreshCounter.innerText = autoRefreshCount
+        autoRefreshInterval = setInterval(() => {
+            if (!autoRefreshCount) {
+                fetchFeed()
+                autoRefreshCount = 5
+            } else {
+                autoRefreshCount--
+            }
+            autoRefreshCounter.innerText = autoRefreshCount || 'refreshing...'
+        }, 1000)
+    }
+
+    autoRefreshEnabled.addEventListener('change', event => {
+        localStorage.setItem('autoRefresh', event.target.checked)
+        if (event.target.checked) startAutoRefresh()
+        else {
+            clearInterval(autoRefreshInterval)
+            autoRefreshCounter.innerText = 'paused'
+        }
+    })
+
+    refresh.addEventListener('click', fetchFeed)
+    loginForm.addEventListener('submit', async event => {
+        event.preventDefault()
+
+        const formData = new FormData(loginForm)
+
+        loginUsing({
+            username: formData.get('username'),
+            password: formData.get('password'),
+            instance: instanceInput.value
+        })
+    })
+    statusForm.addEventListener('submit', event => {
+        event.preventDefault()
+
+        updateStatus({
+            status: statusInput.value,
+            gif: null,
+            username: loggedIn.username,
+            password: loggedIn.password,
+            instance: loggedIn.instance
+        })
+    })
+
+    logoutButton.addEventListener('click', () => {
+        localStorage.removeItem('login')
+        location.reload()
+    })
+
+    mcPlantButton.addEventListener('click' ,()=>{
+        alert('You eat a McPlant. Yum! You regain 10 HP.')
+    })
+
+    colorPicker.addEventListener('input', event => {
+        document.documentElement.style.cssText = `--primary: ${colorPicker.value}`
+        localStorage.setItem('color', colorPicker.value)
+    })
+
+    colorPickerLabel.addEventListener('click', event => {
+
+        // Shift click the color picker to clear color
+        // This is undocumented of course
+
+        if (!event.shiftKey) return
+        event.preventDefault()
+
+        document.documentElement.style.cssText = ''
+        localStorage.removeItem('color')
+    })
+
+    async function updateStatus({ status, gif, username, password, instance }) {
+        const foundInstance = config.instances.find(({ name }) => name === instance)
+
+        const updateEndpoint = foundInstance.endpoints.update
+
+        if (!updateEndpoint) return alert('instance lacks ability to update status')
+
+        await fetch(updateEndpoint, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                status,
+                gif,
+                username,
+                password,
+            })
+        })
+
+        await fetchFeed()
+
+    }
+
+    async function loginUsing({ username, password, instance }) {
+        const foundInstance = config.instances.find(({ name }) => name === instance)
+
+        const loginEndpoint = foundInstance.endpoints.login
+
+        if (!loginEndpoint) return
+
+        const res = await fetch(loginEndpoint, {
+            method: 'POST',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body: JSON.stringify({
+                username,
+                password
+            })
+        })
+
+        if (res.status === 401) return alert('wrong password')
+
+        const json = await res.json()
+        if (!Array.isArray(json)) {
+            if ('error' in json) {
+                if (!loggedIn) alert(json.error)
+            } else {
+                if (!loggedIn) alert(json.error)
+            }
+            return localStorage.removeItem('login')
+        }
+
+        statusInput.value = json[3]
+
+        loggedIn = {
+            username,
+            password,
+            instance
+        }
+
+        localStorage.setItem('login', JSON.stringify(loggedIn))
+
+        loginForm.style.display = 'none'
+        statusForm.style.display = 'flex'
+
+        whoAmI.innerText = `You are logged in as ${username}@${instance}`
+        await fetchFeed()
+
+    }
+    async function fetchFeed() {
+
+        let posts = []
+
+        if (globalThis.devMode) {
+
+            // Used for development don't mind this
+
+            refresh.disabled = true
+            const mockPosts = [
+                {
+                    author: "Tristie",
+                    content: "> **bold** *italics* isn't this super cool hello @JohnLogin **yeah i agree `does this work?`**",
+                    gif: 'berd',
+                    date: new Date(new Date() - DATE_OFFSET),
+                    instance: 'todepond.com'
+                },
+                {
+                    author: "JohnLogin",
+                    content: "@Tristie @TristieButOther Instance💚@cute-catgirl.github.io",
+                    gif: 'berd',
+                    date: new Date(new Date() - DATE_OFFSET),
+                    instance: 'todepond.com'
+                },
+                {
+                    author: "TristieButOther Instance💚",
+                    content: "@Tristie test post 2 @Tristie @joe @joe @joe @joe",
+                    date: new Date(new Date() - DATE_OFFSET),
+                    gif: 'berd',
+                    instance: 'cute-catgirl.github.io'
+                }
+            ]
+
+            cachedNames = new Set(['Tristie', 'JohnLogin'])
+            cachedNamesWithSpaces = new Set(['TristieButOther Instance💚'])
+
+            posts = mockPosts
+
+        } else {
+            refresh.disabled = true
+
+            // Fetch all feeds in parallel using Promise.all
+
+            const instances = await Promise.all(config.instances.map(({ endpoints, name }) => fetch(endpoints.feed).then(res => res.json()).catch(() => ([])).then(feed => ({ name, feed }))))
+
+            for (let instance of instances) {
+                if (!Array.isArray(instance.feed)) continue
+                for (let post of instance.feed) {
+
+                    if (post[1].includes(' ')) cachedNamesWithSpaces.add(post[1])
+                    else cachedNames.add(post[1])
+
+                    if (typeof post[0] === 'string' &&
+                        typeof post[1] === 'string' &&
+                        new Date(post[2]).getTime()) posts.push({
+                            content: post[0],
+                            author: post[1],
+                            date: new Date(new Date(post[2]) - DATE_OFFSET),
+                            gif: post[3] || '',
+                            instance: instance.name
+                        })
+                }
+            }
+        }
+
+        posts = posts.sort((a, b) => b.date - a.date)
+
+        feed.innerHTML = ''
+
+        for (let post of posts) {
+
+            // Don't allow posts to be hoisted with a fake date
+            if (post.date < new Date()) pushPost({
+                author: post.author,
+                content: post.content,
+                date: post.date,
+                gif: post.gif,
+                instance: post.instance
+            })
+        }
+
+        refresh.disabled = false
+        autoRefreshCount = 5
+    }
+
+    function pushPost({ author, content, date, gif, instance }) {
+
+        const post = placeholderPost.cloneNode(true).querySelector('li')
+        const instanceConfig = config.instances.find(i => i.name === instance)
+
+        post.querySelector('h3').innerText = author
+
+        if (gif) {
+
+            const image = post.querySelector('img')
+            const foundGif = config.gifs[gif] || instanceConfig && ('gifs' in instanceConfig) && instanceConfig.gifs[gif]
+
+            if (foundGif) {
+                image.src = foundGif.src
+                image.alt = foundGif.alt
+                image.style.display = 'block'
+            }
+
+        }
+
+        post.id = `post-${author}@${instance}`
+
+        const instanceElement = post.querySelector('small>a')
+        instanceElement.innerText = `@${instance}`
+        instanceElement.href = instanceConfig?.frontend
+
+        const timeElement = post.querySelector('time')
+        timeElement.innerText = getRelativeTime(new Date(date))
+        timeElement.dateTime = date.toISOString()
+        timeElement.title = date.toLocaleString()
+
+        post.querySelector('span').innerHTML = getHtmlFromMarkdown(content, instance)
+        feed.appendChild(post)
+
+    }
+
+    function getHtmlFromMarkdown(md, instance) {
+
+        if (md === "please add gifs") return '<img src="https://todepond.com/lab/login/gif.gif" style="max-width: 100%">'
+
+        let blockquote = md.startsWith('> ')
+        let mentionCount = ([...md.matchAll(' @')]).length + md.startsWith('@')
+
+        // const possibleMentionRegex = /@(?<mention>\w+(?:\s+\w+)*)(?:@(?<mentionInstance>[\w.-]+))?/g
+        const possibleMentionRegex = /@(?<mention>[^@]+)(?:@(?<mentionInstance>[a-z-\.]{1,25}))?/g
+        const possibleMentions = md.matchAll(possibleMentionRegex)
+
+        // This sanitizes the HTML somehow
+        let html = new Option(blockquote ? md.substring(2) : md).innerHTML
+
+        if (blockquote) html = '<blockquote>' + html + ' '
+
+        const matchers = [
+            ['**', 'b'],
+            ['*', 'i'],
+            ['`', 'code']
+        ]
+
+        for (let matcher of matchers) {
+            let commit = ''
+            let open = false
+
+            for (let sect of html.split(matcher[0])) {
+                if (open) commit += `<${matcher[1]}>${sect}</${matcher[1]}>`
+                else commit += sect
+                open = !open
+            }
+
+            if (open) commit += `</${matcher[1]}>`
+            html = commit
+        }
+
+        /*
+        *
+        *   This is all @mentions (help me)
+        *   Could use some reorganization but that is for another day
+        * 
+        */
+
+        mentionLoop: for (let match of possibleMentions) {
+
+            const { mention, mentionInstance } = match.groups
+            if (!mention) continue
+
+            if (mentionInstance && !config.instances.find(i => i.name === mentionInstance)) continue
+            if (mention.includes(' ')) {
+                for (let spaceName of cachedNamesWithSpaces) {
+                    let match = mention.match(spaceName)
+                    if (Array.isArray(match)) {
+                        if (mentionInstance) html = html.replace(`@${match[0]}@${mentionInstance}`, createMention(match[0], mentionInstance, false))
+                        else html = html.replace(`@${match[0]}`, createMention(match[0], instance))
+                        continue mentionLoop
+                    }
+                }
+                if (cachedNames.has(mention.split(' ')[0])) {
+                    if (mentionInstance) html = html.replace(`@${mention.split(' ')[0]}`, createMention(mention.split(' ')[0], mentionInstance, false))
+                    else html = html.replace(`@${mention.split(' ')[0]}`, createMention(mention.split(' ')[0], instance))
+                }
+
+            }
+
+            if (cachedNames.has(mention)) {
+                if (mentionInstance) html = html.replace(`@${mention}@${mentionInstance}`, createMention(mention, mentionInstance, false))
+                else html = html.replace(`@${mention}`, createMention(mention, instance))
+            }
+        }
+
+        if (blockquote) html += '</blockquote>'
+
+        return html
+    }
+
+    function createMention(username, instance, local = true) {
+        return `<a class="instance-${instance} at-${username}" href="#post-${username}@${instance}">@${username}${local ? '' : `@${instance}`}</a>`
+    }
+
+
+</script>
+
+<style>
+    :root {
+        --lighter: oklch(from var(--background) calc(l * 1.25) c h);
+        --darker: oklch(from var(--background) calc(l * 0.75) c h);
+
+        --background: hsl(from var(--primary) h calc(s * 1.2) calc(l * 0.35));
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    p {
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+
+    .cool-button {
+        background-color: transparent;
+        border-style: solid;
+        height: fit-content;
+        border-width: .2em .3em .3em .2em;
+        width: fit-content;
+        border-color: var(--lighter) var(--darker) var(--darker) var(--lighter);
+        padding: 0.4em;
+        background-color: transparent;
+        font-size: large;
+        color: var(--text-color);
+        cursor: pointer;
+
+        &:active {
+            border-width: .3em .2em .2em .3em;
+            border-color: var(--darker) var(--lighter) var(--lighter) var(--darker);
+
+        }
+    }
+
+    select.cool-select {
+        width: 100%;
+        background-color: transparent;
+        font-size: large;
+
+        border-style: solid;
+        border-width: .2em .3em .3em .2em;
+        border-color: var(--lighter) var(--darker) var(--darker) var(--lighter);
+
+        padding: 0.4em;
+        color: var(--text-color);
+    }
+
+    label:has(.cool-input) {
+        width: 100%;
+
+        input.cool-input {
+            width: 100%;
+            background-color: var(--darker);
+            font-size: large;
+
+            border-color: transparent;
+            /* border-style: solid; */
+            /* border-color: rgba(from var(--primary) r g b / 0.5); */
+            border-width: .2em .3em .3em .2em;
+            /* border-color: var(--lighter) var(--darker) var(--darker) var(--lighter); */
+
+            padding: 0.4em;
+            color: var(--text-color);
+        }
+
+        h2 {
+            padding-bottom: 0.2em;
+        }
+    }
+
+    label:has(input[type="color"]) {
+        cursor: pointer;
+
+        svg {
+            width: 1em;
+            height: 1em;
+        }
+    }
+
+    form#loginForm {
+        display: flex;
+        gap: 0.2em;
+        align-items: end;
+
+        @media only screen and (max-width: 768px) {
+            flex-direction: column;
+            align-items: start;
+        }
+
+        label:has(.cool-select) {
+            width: 50%;
+        }
+    }
+
+    #statusForm {
+        display: flex;
+        gap: 0.4em;
+        flex-direction: column;
+
+        div {
+            display: flex;
+            gap: 0.2em;
+            width: fit-content;
+            flex-shrink: 0;
+        }
+    }
+
+    details {
+        summary {
+            cursor: pointer;
+            user-select: none;
+            opacity: 0.75;
+        }
+        div {
+            padding-top: .5em;
+            display: flex;
+            gap: .3em;
+            .cool-button {
+                height: 2.5em;
+            }
+        }
+    }
+
+    #whoAmI {
+        display: inline-flex;
+        font-size: small;
+        opacity: 0.8;
+    }
+
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-bottom: 0.8em;
+
+        div {
+            display: flex;
+            align-items: center;
+            gap: 0.2em;
+
+            button {
+                display: grid;
+                place-items: center;
+                font-size: large;
+                background-color: transparent;
+                color: var(--text-color);
+                border: none;
+                cursor: pointer;
+                transition: color linear .1s;
+                animation: none;
+                translate: 0 2px;
+
+                &:hover {
+                    color: var(--primary);
+                }
+
+                &[disabled],
+                &:disabled {
+                    animation: turn 0.1s linear forwards infinite;
+                }
+            }
+        }
+
+        label {
+            display: flex;
+            align-items: baseline;
+            cursor: pointer;
+            display: flex;
+            flex-shrink: 0;
+        }
+    }
+
+    @keyframes turn {
+        from {
+            rotate: 0deg;
+        }
+
+        to {
+            rotate: 360deg;
+        }
+    }
+
+    h1 {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        a {
+            svg {
+                width: 0.9em;
+                height: 0.9em
+            }
+        }
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        max-width: 40rem;
+        word-wrap: break-word;
+        font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+        li {
+            display: block;
+
+            h3 {
+                padding-bottom: 0;
+            }
+
+            span {
+                code {
+                    background-color: var(--primary);
+                    padding-inline: 0.5em;
+                }
+
+                blockquote {
+                    margin: 0;
+                    padding-left: 2em;
+                    position: relative;
+                    color: hsl(from var(--text-color) 0 0 80%);
+
+                    &:before {
+                        position: absolute;
+                        left: 0;
+                        height: 100%;
+                        content: '';
+                        width: 2px;
+                        border-radius: 2em;
+                        background-color: var(--primary);
+                    }
+                }
+            }
+
+            div {
+                display: flex;
+                justify-content: space-between;
+
+                time {
+                    opacity: 0.5;
+                }
+
+                button {
+                    color: var(--text-color);
+                    border: none;
+                    background-color: transparent;
+                    margin-top: .5em;
+                    cursor: pointer;
+                    transition: color linear .1s;
+
+                    svg {
+                        height: 1.5em;
+                        width: 1.5em;
+                    }
+
+                    &:hover {
+                        color: var(--primary);
+                    }
+                }
+            }
+
+            hr {
+                margin-top: 1em;
+                margin-bottom: 1em;
+                opacity: 0.1;
+            }
+        }
+    }
+</style>
