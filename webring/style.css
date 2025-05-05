@@ -1,0 +1,50 @@
+body
+{
+  background-color: black;
+}
+
+img
+{
+  filter: grayscale(100%);
+  border-style: solid;
+  border-color:rgb(0, 0, 0);
+  position:relative;
+  border-width: 0;
+  width: 88px;
+  height: 31px;
+}
+
+a img:hover {
+  filter: grayscale(0);
+  border-style: solid;
+  z-index:100;
+  outline:32px blue solid;
+  outline-offset: 0px;
+}
+
+.xxiivvlogo
+ {
+	margin: auto;
+	width:88px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 88px 88px 88px 88px 88px;
+  grid-gap: 1px;
+  padding: 0px;
+  }
+
+.grid-container > div {
+  background-color: rgb(0, 0, 0);
+  padding: 0px;
+  font-size: 0px;
+}
+
+.header
+{
+	width: 442px;
+	background-color:black;
+	padding: 0px;
+    margin: auto auto 2px auto;
+}
