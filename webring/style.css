@@ -19,8 +19,9 @@ a img:hover {
   filter: grayscale(0);
   border-style: solid;
   z-index:100;
-  outline:32px blue solid;
+  /* outline:32px blue solid; */
   outline-offset: 0px;
+  box-shadow: 0px 0px 100px 70px #0044ff
 }
 
 .xxiivvlogo
