@@ -1,6 +1,7 @@
 body
 {
   background-color: black;
+  margin-top: 100px;
 }
 
 img
@@ -29,6 +30,7 @@ a img:hover {
 }
 
 .grid-container {
+
   display: grid;
   grid-template-columns: 88px 88px 88px 88px 88px;
   grid-gap: 1px;
@@ -44,7 +46,7 @@ a img:hover {
 .header
 {
 	width: 442px;
-	background-color:black;
+	background-color:rgb(0, 0, 0);
 	padding: 0px;
     margin: auto auto 2px auto;
 }
