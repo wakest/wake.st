@@ -21,7 +21,8 @@ a img:hover {
   z-index:100;
   /* outline:32px blue solid; */
   outline-offset: 0px;
-  box-shadow: 0px 0px 100px 70px #0044ff
+  box-shadow: 0px 0px 100px 70px #0044ff;
+  transition: box-shadow 0.6s ease-in-out;
 }
 
 .xxiivvlogo
