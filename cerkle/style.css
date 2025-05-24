@@ -5,3 +5,7 @@ html, body {
   canvas {
     display: block;
   }  
+
+  body {
+    overflow: hidden; /* Hide scrollbars */
+  }
