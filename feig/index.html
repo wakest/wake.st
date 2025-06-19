@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fediverse Event Instance Grabber</title>
+    <style>
+        :root {
+            --border-radius: 20px;
+            --toggle-border-color: #006600;
+            --toggle-inactive-bg: #003300; /* Swapped: Now Darker Green for inactive */
+            --toggle-inactive-text: #33FF33;
+            --toggle-active-bg: #004D00;   /* Swapped: Now Lighter Green for active */
+            --toggle-active-text: #00FF00;
+            --toggle-hover-bg: var(--toggle-active-bg); /* Unified: Was #004D00, now matches active bg for hover */
+            --accent-pink-color: #FF69B4; /* Added pink accent color variable */
+
+            /* Button Specific - derived from toggle for consistency, no shadows */
+            --button-bg: var(--toggle-inactive-bg);                 /* Unified: Will now be #004D00 */
+            --button-text-color: var(--toggle-inactive-text);       /* Default text color */
+            --button-border-color: var(--toggle-border-color);      /* Default border color */
+            --button-border-width: 1px;                             /* Border width */
+            --button-border-style: solid;                           /* Border style */
+
+            --button-hover-bg: var(--button-active-bg);             /* Unified: Was var(--toggle-hover-bg), now active bg for hover */
+            --button-hover-text-color: var(--toggle-active-text);   /* Hover text color */
+
+            --button-active-bg: var(--toggle-active-bg);            /* Active/pressed background */
+            --button-active-text-color: var(--toggle-active-text);  /* Active/pressed text color */
+            /* --button-active-text-shadow: 0 0 5px var(--toggle-active-text); Removed text shadow */
+
+            --button-disabled-bg: #001a00;                          /* Disabled background */
+            --button-disabled-text-color: #006600;                  /* Disabled text color */
+            --button-disabled-border-color: #003300;                /* Disabled border color, darker green */
+        }
+        body { font-family: 'Courier New', Courier, monospace; margin: 20px; background-color: #000000; color: #00FF00; }
+        .container {
+            max-width: 800px; margin: auto; background-color: #0D0D0D; padding: 20px;
+            border-radius: var(--border-radius); border: 1px solid var(--accent-pink-color);
+            position: relative; /* Establish positioning context for absolute children like SVG */
+            box-sizing: border-box; /* Ensure width/height include padding and border for SVG sizing */
+        }
+        h1 { color: #00FF00; text-align: center; /* text-shadow: 0 0 5px #00FF00; Removed text shadow */ }
+        label { display: block; margin-top: 15px; margin-bottom: 5px; font-weight: bold; color: #33FF33; }
+        input[type="text"], textarea {
+            width: 100%; padding: 10px; margin-top: 5px; box-sizing: border-box; 
+            border: none; border-radius: var(--border-radius); 
+            background-color: #050505; color: #00FF00; font-family: 'Courier New', Courier, monospace;
+        }
+        textarea { height: 150px; }
+        button {
+            margin-top: 20px; padding: 5px 10px; cursor: pointer; /* Unified padding */
+            background-color: var(--button-bg);
+            color: var(--button-text-color);
+            border: var(--button-border-width) var(--button-border-style) var(--button-border-color);
+            border-radius: var(--border-radius);
+            font-family: 'Courier New', Courier, monospace; /* Ensure button font */
+            font-size: 0.9em; /* Unified font-size */ /* Removed text-shadow: none; as it's handled by active state now */
+            text-transform: uppercase;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+            text-shadow: none; /* Remove previous default text-shadow */
+        }
+        button:hover {
+            background-color: var(--button-hover-bg); 
+            color: var(--button-hover-text-color);
+        }
+        button:active {
+            background-color: var(--button-active-bg);
+            color: var(--button-active-text-color);
+            /* text-shadow: var(--button-active-text-shadow); Removed text shadow */
+            border-color: var(--button-active-bg); /* Unified: Border blends on active */
+        }
+        button:disabled {
+            background-color: var(--button-disabled-bg);
+            color: var(--button-disabled-text-color);
+            border-color: var(--button-disabled-border-color);
+            cursor: not-allowed; 
+            text-shadow: none;
+        }
+        pre { background-color: #050505; padding: 15px; border: none; border-radius: var(--border-radius); white-space: pre-wrap; word-wrap: break-word; max-height: 300px; overflow-y: auto; color: #00DD00; }
+        .error { color: #FF6666; font-weight: bold; } /* Pink scrollbar for <pre> elements */ pre::-webkit-scrollbar { width: 10px; } pre::-webkit-scrollbar-track { background: #050505; /* Match pre background */ border-radius: var(--border-radius); } pre::-webkit-scrollbar-thumb { background-color: var(--accent-pink-color); border-radius: var(--border-radius); border: 2px solid #050505; /* Creates padding around thumb */ } /* For Firefox */ pre { scrollbar-width: thin; scrollbar-color: var(--accent-pink-color) #050505; }
+
+        #fieldFilterControlsContainer, #graphqlFieldFilterControlsContainer { margin-top: 15px; }
+        #fieldFilterControls, #graphqlFieldFilterControls { 
+            margin-bottom: 15px; 
+            padding: 10px; 
+            border: none; 
+            border-radius: var(--border-radius); 
+            background-color: #0A0A0A;
+        }
+
+        /* Hide actual checkboxes */
+        #fieldFilterControls input[type="checkbox"], 
+        #graphqlFieldFilterControls input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Style labels as buttons */
+        #fieldFilterControls label, 
+        #graphqlFieldFilterControls label {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 8px;
+            margin-bottom: 8px; /* For wrapping */
+            background-color: var(--toggle-inactive-bg); /* Corrected to use inactive bg */
+            color: var(--button-text-color);
+            font-family: 'Courier New', Courier, monospace; /* Ensure filter button font */
+            border: 1px solid var(--button-border-color);
+            border-radius: var(--border-radius);
+            font-weight: normal;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out; /* Removed text-shadow from transition */
+        }
+        #fieldFilterControls input[type="checkbox"]:checked + label,
+        #graphqlFieldFilterControls input[type="checkbox"]:checked + label {
+            background-color: var(--button-active-bg);
+            color: var(--button-active-text-color);
+            /* text-shadow: var(--button-active-text-shadow); Removed text shadow */
+            border-color: var(--button-active-bg); /* Border matches active background */
+        }
+        /* Unified hover for checkbox labels - matches button:hover */
+        #fieldFilterControls label:hover,
+        #graphqlFieldFilterControls label:hover {
+            background-color: var(--button-hover-bg); /* Matches button:hover background */
+            color: var(--button-hover-text-color);   /* Matches button:hover text color */
+        }
+
+        /* Dot indicator for labels (checkboxes and toggles) */
+        #fieldFilterControls label::before,
+        #graphqlFieldFilterControls label::before,
+        .toggle-group label::before {
+            content: "◦"; /* Default to green open circle */
+            color: #00FF00; /* Green color */
+            margin-right: 6px;
+            font-weight: bold;
+            opacity: 1; /* Visible by default */
+            transition: opacity 0.2s ease-in-out; /* Smooth transition for visibility */
+        }
+
+        /* JSON Syntax Highlighting Styles */
+        .json-key { color: var(--accent-pink-color); font-weight: bold; } /* Pink */
+        .json-string { color: var(--toggle-active-text); } /* Brightest Green (#00FF00) */
+        .json-number { color: var(--toggle-inactive-text); } /* Slightly less bright Green (#33FF33) */
+        .json-boolean { color: var(--accent-pink-color); } /* Pink */
+        .json-null { color: var(--toggle-inactive-text); } /* Slightly less bright Green (#33FF33) */
+
+        /* Show dot when input is checked */
+        #fieldFilterControls input[type="checkbox"]:checked + label::before,
+        #graphqlFieldFilterControls input[type="checkbox"]:checked + label::before,
+        .toggle-group input[type="radio"]:checked + label::before {
+            content: "•"; /* Change to pink solid dot when selected */
+            color: var(--accent-pink-color);
+        }
+
+        #graphqlSoftwareSelect {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px; /* Added margin-bottom for spacing */
+            box-sizing: border-box;
+            border: none; /* Changed border color to match other inputs */
+            border-radius: var(--border-radius); /* Ensure select uses the font */
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #050505; /* Match other inputs */
+            color: #00FF00; /* Match other inputs */
+        }
+        .controls-group { display: flex; align-items: center; flex-wrap: wrap; margin-bottom: 15px; }
+        .controls-group > label { margin-right: 10px; color: #00FF00; /* Spacing for main labels */ }
+        .controls-group > .inline-label { margin-left: 5px; margin-right: 10px; font-weight: normal; color: #33FF33; /* Spacing for radio/select labels */ }
+        .controls-group > input[type="radio"] { margin-left: 0; margin-right: 0px; /* Green tint for radio buttons was here, but they are styled as toggles now */ }
+        .controls-group > select { margin-left: 5px; padding: 8px; width: auto; font-family: 'Courier New', Courier, monospace; background-color: #050505; color: #00FF00; border: 1px solid var(--button-border-color); border-radius: var(--border-radius);}
+
+        /* Toggle Button Group Styles */
+        .toggle-group {
+            display: inline-flex;
+            border: 1px solid var(--toggle-border-color);
+            border-radius: var(--border-radius);
+            overflow: hidden; /* Ensures inner borders don't break rounded corners */
+        }
+
+        .toggle-group input[type="radio"] {
+            position: absolute; /* Hide the actual radio button */
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-group label {
+            display: block;
+            flex-grow: 1; /* Make labels take equal space if desired */
+            padding: 5px 10px; /* Unified padding */
+            margin: 0; /* Override general label margins */
+            background-color: var(--toggle-inactive-bg);
+            color: var(--toggle-inactive-text);
+            font-weight: normal; /* Override general label font-weight */
+            text-align: center;
+            font-family: 'Courier New', Courier, monospace; /* Ensure toggle button font */
+            font-size: 0.9em; /* Unified font-size */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+            border: none; /* Individual borders removed, group has one */ text-transform: uppercase; /* Removed text-shadow from transition */
+            line-height: normal;
+        }
+
+        .toggle-group label:not(:last-of-type) {
+            border-right: 1px solid var(--toggle-border-color); /* Separator */
+        }
+
+        .toggle-group input[type="radio"]:checked + label {
+            background-color: var(--toggle-active-bg);
+            color: var(--toggle-active-text);
+            /* text-shadow: 0 0 5px var(--toggle-active-text); Removed text shadow */
+        }
+
+        .toggle-group label:hover {
+            background-color: var(--toggle-hover-bg);
+            color: var(--toggle-hover-text-color); /* Unified: Matches button:hover text color */
+        }
+    </style>
+    <script>
+        // Helper function to manage visibility of GraphQL specific fields
+        // Forward declaration for drawConnectingLines
+        let drawConnectingLines = () => {};
+        function toggleGraphQLFields(show) {
+            const restOptionsContainer = document.getElementById('restOptionsContainer');
+            const apiEndpointLabel = document.querySelector('label[for="apiEndpoint"]');
+            const apiEndpointInput = document.getElementById('apiEndpoint');
+            const apiEndpointSmallText = apiEndpointInput ? apiEndpointInput.nextElementSibling : null;
+            // New GraphQL Field Filter elements
+            const graphqlFieldFilterControlsContainer = document.getElementById('graphqlFieldFilterControlsContainer');
+            // REST Field Filter elements
+            const fieldFilterControlsContainer = document.getElementById('fieldFilterControlsContainer');
+            // The shared software select is always visible, so no need to toggle its visibility here.
+            
+            if (graphqlFieldFilterControlsContainer) graphqlFieldFilterControlsContainer.style.display = show ? 'block' : 'none';
+            // Show REST filter controls if REST is selected (show === false), hide if GraphQL is selected (show === true)
+            if (fieldFilterControlsContainer) fieldFilterControlsContainer.style.display = show ? 'none' : 'block';
+            
+            // Always hide API Endpoint input and its related elements as per new requirements
+            if (apiEndpointLabel) apiEndpointLabel.style.display = 'none';
+            if (apiEndpointInput) apiEndpointInput.style.display = 'none';
+            if (apiEndpointSmallText) apiEndpointSmallText.style.display = 'none';
+            
+            if (restOptionsContainer) restOptionsContainer.style.display = show ? 'none' : 'block'; // Show for REST, hide for GraphQL
+            // Redraw lines after visibility changes
+            if (typeof drawConnectingLines === 'function') setTimeout(drawConnectingLines, 50);
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <svg id="connectingLinesSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1;"></svg>
+        <div class="controls-group">
+            <div class="toggle-group">
+                <input type="radio" id="apiTypeGraphQL" name="apiType" value="graphql" checked onchange="toggleGraphQLFields(true); if(window.renderRestParams) window.renderRestParams();">
+                <label for="apiTypeGraphQL">Fediverse Observer</label>
+                <input type="radio" id="apiTypeREST" name="apiType" value="rest" onchange="toggleGraphQLFields(false); if(window.renderRestParams) window.renderRestParams();">
+                <label for="apiTypeREST">FediDB</label>
+            </div>
+            <!-- Added margin-left to the second toggle group for spacing -->
+            <div class="toggle-group" style="margin-left: 20px;">
+                <input type="radio" id="softwareGancio" name="sharedSoftware" value="gancio" checked>
+                <label for="softwareGancio">gancio</label>
+                <input type="radio" id="softwareMobilizon" name="sharedSoftware" value="mobilizon">
+                <label for="softwareMobilizon">mobilizon</label>
+            </div>
+        </div>
+
+        <input type="text" id="apiEndpoint" placeholder="e.g., https://api.fedidb.org for REST" value="https://api.fedidb.org">
+
+        <div id="restOptionsContainer" style="display: none;">
+            <div id="restParamsContainer" style="margin-top: 0px;"></div> <!-- Adjusted margin-top as the limit controls are removed -->
+        </div>
+
+        <!-- New GraphQL Field Filter Controls -->
+        <div id="graphqlFieldFilterControlsContainer" style="display: none;">
+            <div id="graphqlFieldFilterControls"></div>
+        </div>
+
+        <div id="fieldFilterControlsContainer" style="display: none;">
+            <div id="fieldFilterControls"></div>
+        </div>
+
+        <button id="executeQuery">Run Query</button>
+
+        <pre id="queryResult">No result yet.</pre>
+
+        <button id="saveResult" disabled>Save Result as JSON</button>
+        <button id="combineButton" style="margin-left: 10px;">Combine Sources</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const endpointInput = document.getElementById('apiEndpoint');
+            const executeButton = document.getElementById('executeQuery');
+            const resultDisplay = document.getElementById('queryResult');
+            const saveButton = document.getElementById('saveResult');
+            const fieldFilterControlsContainer = document.getElementById('fieldFilterControlsContainer');
+            const fieldFilterControlsDiv = document.getElementById('fieldFilterControls');
+            const graphqlFieldFilterControlsContainer = document.getElementById('graphqlFieldFilterControlsContainer');
+            const graphqlFieldFilterControlsDiv = document.getElementById('graphqlFieldFilterControls');
+            const apiTypeRadios = document.querySelectorAll('input[name="apiType"]');
+            const svgLines = document.getElementById('connectingLinesSvg');
+            const pageContainer = document.querySelector('.container');
+
+            const combineButton = document.getElementById('combineButton');
+           
+            let currentJsonResult = null;
+            let nextCursor = null;
+            let currentLimitForPagination = null; // Stores the 'per_page' value for pagination
+
+            const restParamsContainer = document.getElementById('restParamsContainer');
+            // Estimate for half the visual width of the '•' character.
+            const DOT_VISUAL_OFFSET_X = 3; // Adjusted from 4
+
+            function getElementDotPosition(element, svgContainerRect) {
+                if (!element || !element.getClientRects || !element.getClientRects().length) {
+                    return null;
+                }
+                const rect = element.getBoundingClientRect();
+                if (rect.width === 0 && rect.height === 0) { // Element is likely hidden or has no dimensions
+                    return null;
+                }
+
+                const style = window.getComputedStyle(element);
+                const borderLeftWidth = parseFloat(style.borderLeftWidth) || 0;
+                const paddingLeft = parseFloat(style.paddingLeft) || 0;
+
+                const y = rect.top - svgContainerRect.top + rect.height / 2;
+
+                // Calculate the x-coordinate for the start of the dot (its left edge)
+                // rect.left is the outer edge of the border.
+                // The dot is positioned after the border and after the left padding.
+                const x_dot_start_relative_to_svg = (rect.left - svgContainerRect.left) + borderLeftWidth + paddingLeft;
+                
+                // Adjust to the estimated center of the dot
+                const x = x_dot_start_relative_to_svg + DOT_VISUAL_OFFSET_X;
+                return { x, y };
+            }
+
+            drawConnectingLines = function() {
+                if (!svgLines || !pageContainer) return;
+                svgLines.innerHTML = ''; // Clear previous lines
+
+                const containerRect = pageContainer.getBoundingClientRect();
+                const activeApiToggleLabel = document.querySelector('input[name="apiType"]:checked + label');
+                if (!activeApiToggleLabel) return;
+
+                const apiDotPos = getElementDotPosition(activeApiToggleLabel, containerRect); // isToggle no longer needed here
+                if (!apiDotPos) return;
+
+                const selectedApiType = document.querySelector('input[name="apiType"]:checked').value;
+                const relevantFilterControlsDiv = selectedApiType === 'rest' ? fieldFilterControlsDiv : graphqlFieldFilterControlsDiv;
+                const relevantFilterContainerWrapper = selectedApiType === 'rest' ? fieldFilterControlsContainer : graphqlFieldFilterControlsContainer;
+
+                if (relevantFilterContainerWrapper.style.display === 'none' || relevantFilterControlsDiv.offsetParent === null) {
+                    return; // Don't draw if the relevant filter section is hidden
+                }
+
+                const activeFilterLabels = relevantFilterControlsDiv.querySelectorAll('input[type="checkbox"]:checked + label');
+                activeFilterLabels.forEach(label => {
+                    const filterDotPos = getElementDotPosition(label, containerRect); // isToggle no longer needed here
+                    if (filterDotPos) {
+                        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                        const x1 = apiDotPos.x;
+                        const y1 = apiDotPos.y;
+                        const x2 = filterDotPos.x;
+                        const y2 = filterDotPos.y;
+
+                        // Cubic Bezier curve for a smooth horizontal flow
+                        // c1x, c1y are the control point for the start of the curve
+                        // c2x, c2y are the control point for the end of the curve
+                        const dx = x2 - x1;
+                        const horizontalOffsetFactor = 0.6; // Increased from 0.4 for a more pronounced S-curve
+
+                        const c1x = x1 + dx * horizontalOffsetFactor;
+                        const c1y = y1; // Control point y aligned with start y
+                        const c2x = x2 - dx * horizontalOffsetFactor;
+                        const c2y = y2; // Control point y aligned with end y
+
+                        const dCommand = `M ${x1} ${y1} C ${c1x} ${c1y}, ${c2x} ${c2y}, ${x2} ${y2}`;
+                        path.setAttribute('d', dCommand);
+                        path.setAttribute('stroke', 'var(--accent-pink-color)');
+                        path.setAttribute('stroke-width', '1.5');
+                        path.setAttribute('stroke-opacity', '0.7'); // Added for semi-transparency
+                        path.setAttribute('fill', 'none'); // Important: paths should not be filled for line effect
+                        path.setAttribute('shape-rendering', 'geometricPrecision');
+                        svgLines.appendChild(path);
+                    }
+                });
+            }
+
+            // Define REST endpoints and their parameters
+            const restApiEndpoints = {
+                "list_servers": {
+                    path: "/v1.1/servers",
+                    method: "GET",
+                    description: "List servers",
+                    params: [
+                        { name: "software", type: "select", options: ["gancio", "mobilizon"], placeholder: "Select software" },
+                        // Add other params like country_code, registration_status etc. as needed
+                    ]
+                },
+            };
+const filterableFields = ["domain", "version", "id", "status_count", "user_count"]; // Order changed: domain, version, id
+const graphqlFilterableFields = ["domain", "version", "id", "name", "local_posts"]; // Order changed: domain, version, id
+
+            function updateGraphQLQuery() {
+                // Called by executeQuery to construct the query dynamically
+                const selectedSoftwareRadio = document.querySelector('input[name="sharedSoftware"]:checked');
+                if (!selectedSoftwareRadio) return ""; // Should not happen if one is checked by default
+                const selectedSoftware = selectedSoftwareRadio.value;
+                // Always fetch all defined graphqlFilterableFields for client-side filtering
+                const fieldsToFetch = graphqlFilterableFields; 
+
+                let fieldsString;
+                if (fieldsToFetch.length === 0) {
+                    // Fallback to 'id' if graphqlFilterableFields is somehow empty.
+                    fieldsString = "    id";
+                } else {
+                    fieldsString = fieldsToFetch.map(field => {
+                        if (field === "version") {
+                            return `    version: fullversion`; // Alias fullversion AS version
+                        }
+                        return `    ${field}`;
+                    }).join('\n');
+                }
+                const newNodesBlockContent = `nodes(softwarename: "${selectedSoftware}") {\n${fieldsString}\n  }`;
+                // Always construct the query fresh
+                return `query q1 {\n  ${newNodesBlockContent}\n}`;
+            }
+
+            // Initial UI setup based on default checked radio
+            renderFieldFilterControls(); // Initialize filter controls
+            renderGraphQLFieldFilterControls(); // Initialize GraphQL filter controls
+
+            // Expose renderRestParams globally for inline onchange handlers
+            window.renderRestParams = renderRestParams;
+
+            async function fetchGraphQLData(endpoint, query) {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ query })
+                });
+
+                if (!response.ok) {
+                    const errorBody = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorBody}`);
+                }
+                return await response.json();
+            }
+
+            async function fetchRESTData(baseUrl, endpointConfig, paramsData) {
+                let constructedPath = endpointConfig.path;
+                const queryParams = new URLSearchParams();
+
+                // Handle path parameters first
+                endpointConfig.params.forEach(param => {
+                    if (param.type === "path" && paramsData[param.name]) {
+                        constructedPath = constructedPath.replace(`:${param.name}`, encodeURIComponent(paramsData[param.name]));
+                    }
+                });
+
+                // Check if all path parameters are filled
+                if (constructedPath.includes(':')) {
+                    throw new Error(`Missing path parameter(s) in: ${constructedPath}`);
+                }
+
+                // Add all relevant query parameters from paramsData
+                for (const key in paramsData) {
+                    if (paramsData.hasOwnProperty(key)) {
+                        const isPathParam = endpointConfig.params.some(p => p.name === key && p.type === "path");
+                        if (!isPathParam && paramsData[key] !== undefined && String(paramsData[key]).trim() !== "") {
+                            queryParams.append(key, String(paramsData[key]));
+                        }
+                    }
+                }
+
+                // For initial list_servers call, if 'limit' wasn't in paramsData (e.g. from pagination), add from UI.
+                if (endpointConfig.path === "/v1.1/servers" && !queryParams.has('limit')) {
+                    const selectedLimit = document.querySelector('input[name="requestLimit"]:checked')?.value || "50";
+                    queryParams.set("limit", selectedLimit);
+                }
+
+                let fullUrl = baseUrl.replace(/\/$/, "") + constructedPath; // Remove trailing slash from baseUrl if present
+                if (queryParams.toString()) {
+                    fullUrl += `?${queryParams.toString()}`;
+                }
+
+                const response = await fetch(fullUrl, {
+                    method: endpointConfig.method, // Usually GET for these
+                    headers: {
+                        'Accept': 'application/json',
+                    }
+                    // Add body here if method is POST/PUT etc. and endpointConfig defines it
+                });
+                if (!response.ok) {
+                    console.error("Fetch error response:", response);
+                    const errorBody = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}, Message: ${errorBody}`);
+                }
+                return await response.json();
+            }
+            function getFilteredJson(originalJson) {
+                // If originalJson is null/undefined, return empty structure
+                if (!originalJson) return Array.isArray(originalJson) ? [] : {};
+
+                const selectedApiType = document.querySelector('input[name="apiType"]:checked').value;
+
+                // Universal cleaning function (applies always for REST data)
+                const recursivelyCleanUniversal = (currentObject, parentKey = null) => {
+                    if (typeof currentObject !== 'object' || currentObject === null) {
+                        return currentObject;
+                    }
+                    if (Array.isArray(currentObject)) {
+                        return currentObject.map(element => recursivelyCleanUniversal(element, null));
+                    }
+                    const newObject = {};
+                    for (const [key, value] of Object.entries(currentObject)) {
+                        // Hardcoded removal of specific keys at any level or based on parent
+                        if (key === 'monthly_active_users' || key === 'slug') {
+                            continue; 
+                        }
+                        if (parentKey === 'software' && (key === 'id' || key === 'url' || key === 'name')) { // Added 'name' to be removed
+                            continue;
+                        }
+                        newObject[key] = recursivelyCleanUniversal(value, key); // Recurse, passing current key as parentKey
+                    }
+                    return newObject;
+                };
+
+                let dataToFilter = originalJson; // Start with original data
+
+                // Apply universal cleaning only if it's REST data
+                if (selectedApiType === 'rest') {
+                     dataToFilter = Array.isArray(originalJson)
+                    ? originalJson.map(item => recursivelyCleanUniversal(item))
+                    : recursivelyCleanUniversal(originalJson);
+                }
+                // GraphQL data is assumed to be clean already by the fetch/query logic
+
+                const filterControlsDiv = selectedApiType === 'rest' ? fieldFilterControlsDiv : graphqlFieldFilterControlsDiv;
+                const allCheckboxes = Array.from(filterControlsDiv.querySelectorAll('input[type="checkbox"]'));
+                const activeFilterKeys = allCheckboxes.filter(cb => cb.checked).map(cb => cb.value);
+
+                if (selectedApiType === 'rest') {
+                    // Checkbox-based filtering for REST
+                    if (allCheckboxes.length > 0 && activeFilterKeys.length === 0) {
+                        // If filters exist but none are selected, return an empty structure
+                        return Array.isArray(dataToFilter) ? [] : {};
+                    }
+
+                    const buildItemFromFilters = (cleanedItem) => {
+                        if (typeof cleanedItem !== 'object' || cleanedItem === null) return cleanedItem;
+                        const finalItem = {};
+
+                        if (activeFilterKeys.includes("domain") && cleanedItem.hasOwnProperty("domain")) {
+                            finalItem.domain = cleanedItem.domain;
+                        }
+                        // Add handling for the 'id' field
+                        if (activeFilterKeys.includes("id") && cleanedItem.hasOwnProperty("id")) {
+                            finalItem.id = cleanedItem.id;
+                        }
+
+                        if (cleanedItem.software) {
+                            const softwareOutput = {};
+                            // "name" is no longer a filterable field and is removed by recursivelyCleanUniversal
+                            if (activeFilterKeys.includes("version") && cleanedItem.software.hasOwnProperty("version")) {
+                                softwareOutput.version = cleanedItem.software.version;
+                            }
+                            if (Object.keys(softwareOutput).length > 0) {
+                                finalItem.software = softwareOutput;
+                            }
+                        }
+
+                        if (cleanedItem.stats) {
+                            const statsOutput = {};
+                            if (activeFilterKeys.includes("status_count") && cleanedItem.stats.hasOwnProperty("status_count")) {
+                                statsOutput.status_count = cleanedItem.stats.status_count;
+                            }
+                            if (activeFilterKeys.includes("user_count") && cleanedItem.stats.hasOwnProperty("user_count")) {
+                                statsOutput.user_count = cleanedItem.stats.user_count;
+                            }
+                            if (Object.keys(statsOutput).length > 0) {
+                                finalItem.stats = statsOutput;
+                            }
+                        }
+                        return finalItem;
+                    };
+
+                    return Array.isArray(dataToFilter)
+                        ? dataToFilter.map(buildItemFromFilters)
+                        : buildItemFromFilters(dataToFilter);
+                } else if (selectedApiType === 'graphql') {
+                    // GraphQL data (dataToFilter) is an array of nodes.
+                    if (!Array.isArray(dataToFilter)) return [];
+
+                    // If no filterable fields are defined for GraphQL or no checkboxes are rendered, return original data.
+                    if (graphqlFilterableFields.length === 0 || allCheckboxes.length === 0) {
+                        return originalJson; // No filtering
+                    }
+
+                    // Use the activeFilterKeys derived earlier for the current API type.
+                    // If GraphQL checkboxes exist but none are selected, return an empty array.
+                    if (allCheckboxes.length > 0 && activeFilterKeys.length === 0) {
+                        return []; 
+                    }
+
+                    return dataToFilter.map(item => {
+                        const filteredItem = {};
+                        activeFilterKeys.forEach(key => { // Use activeFilterKeys
+                            if (item.hasOwnProperty(key)) {
+                                if (key === "version") {
+                                    if (!filteredItem.software) {
+                                        filteredItem.software = {};
+                                    }
+                                    filteredItem.software.version = item[key];
+                                } else {
+                                    filteredItem[key] = item[key];
+                                }
+                            }
+                        });
+                        return filteredItem;
+                    }).filter(item => Object.keys(item).length > 0); // Remove items that became empty
+                }
+                return dataToFilter; // Should not be reached if selectedApiType is rest or graphql
+            }
+
+            // Rewritten updateDisplay to handle "NO_FILTERS_SELECTED" and empty states better
+            function updateDisplay() {
+                // If no query has been run yet, show the initial message
+                if (currentJsonResult === null) {
+                    resultDisplay.textContent = 'Run Query to display results.';
+                    resultDisplay.classList.remove('error');
+                    saveButton.disabled = true;
+                    return; // Stop here
+                }
+
+                // If we have data (currentJsonResult is not null), proceed to filter and display.
+                const selectedApiTypeElement = document.querySelector('input[name="apiType"]:checked');
+                const selectedApiType = selectedApiTypeElement ? selectedApiTypeElement.value : null;
+
+                let allFiltersUnchecked = false;
+
+                if (selectedApiType) {
+                    const filterControlsDiv = selectedApiType === 'rest' ? fieldFilterControlsDiv : graphqlFieldFilterControlsDiv;
+                    const allCheckboxes = Array.from(filterControlsDiv.querySelectorAll('input[type="checkbox"]'));
+                    allFiltersUnchecked = allCheckboxes.length > 0 && allCheckboxes.every(cb => !cb.checked);
+                }
+
+                if (allFiltersUnchecked) {
+                    // If filters exist but none are checked, show the specific message
+                    resultDisplay.textContent = 'No filter options selected. Please select at least one filter to see results.';
+                    resultDisplay.classList.remove('error');
+                    saveButton.disabled = true;
+                    return; // Stop here
+                }
+
+                // Get the filtered JSON data now that preliminary checks are done
+                const dataToDisplay = getFilteredJson(currentJsonResult);
+
+                if (dataToDisplay && ((Array.isArray(dataToDisplay) && dataToDisplay.length === 0) || (typeof dataToDisplay === 'object' && !Array.isArray(dataToDisplay) && Object.keys(dataToDisplay).length === 0))) {
+                    resultDisplay.textContent = 'No results match the current filter selection.';
+                    resultDisplay.classList.remove('error');
+                    saveButton.disabled = true;
+                } else if (dataToDisplay !== null && dataToDisplay !== undefined) { 
+                    resultDisplay.innerHTML = syntaxHighlightJson(dataToDisplay);
+                    resultDisplay.classList.remove('error');
+                    saveButton.disabled = false; // Enable save if there's filtered data to display
+                } else {
+                    // Fallback for unexpected state, though getFilteredJson should always return array/object if currentJsonResult is valid
+                    resultDisplay.textContent = 'Could not display data.';
+                    resultDisplay.classList.add('error');
+                    saveButton.disabled = true;
+                }
+            }
+            function syntaxHighlightJson(jsonString) {
+                if (typeof jsonString != 'string') {
+                    jsonString = JSON.stringify(jsonString, undefined, 2);
+                }
+                jsonString = jsonString.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                return jsonString.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                    let cls = 'json-number';
+                    if (/^"/.test(match)) {
+                        cls = /:$/.test(match) ? 'json-key' : 'json-string';
+                    } else if (/true|false/.test(match)) {
+                        cls = 'json-boolean';
+                    } else if (/null/.test(match)) {
+                        cls = 'json-null';
+                    }
+                    return '<span class="' + cls + '">' + match + '</span>';
+                });
+            }
+
+            function saveJSON(data, filename = 'graphql_result.json') {
+                if (!data) {
+                    resultDisplay.textContent = 'No data to save.';
+                    resultDisplay.classList.add('error');
+                    return;
+                }
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            executeButton.addEventListener('click', async () => {
+                const endpoint = endpointInput.value.trim();
+                const apiTypeRadio = document.querySelector('input[name="apiType"]:checked');
+                if (!apiTypeRadio) {
+                     resultDisplay.textContent = 'Please select an API type.';
+                     resultDisplay.classList.add('error');
+                     return;
+                }
+                const selectedApiType = apiTypeRadio.value;
+
+                resultDisplay.textContent = 'Fetching...';
+                resultDisplay.classList.remove('error');
+                saveButton.disabled = true; // Disable save button until new results are fetched
+                currentJsonResult = null;
+                nextCursor = null; // Reset cursor for new queries
+
+                try {
+
+                    if (selectedApiType === 'graphql') {
+                        const graphQLEndpoint = "https://api.fediverse.observer/instances"; // Hardcoded GraphQL endpoint
+                        const query = updateGraphQLQuery(); // Get dynamically generated query
+                        if (!query) {
+                            resultDisplay.textContent = 'Could not generate GraphQL query. Check selections.';
+                            resultDisplay.classList.add('error');
+                            return;
+                        }
+                        const rawGqlResponse = await fetchGraphQLData(graphQLEndpoint, query);
+                        const gqlData = rawGqlResponse.data || rawGqlResponse;
+                        // Assuming gqlData is { nodes: [...] } or an array if 'data' property was missing.
+                        // The query structure implies rawGqlResponse.data will be { nodes: [...] }
+                        currentJsonResult = gqlData && gqlData.nodes ? gqlData.nodes : [];
+                        if (!gqlData || !gqlData.nodes) {
+                            console.warn("GraphQL response did not contain 'data.nodes'. Response:", rawGqlResponse);
+                        }
+                    } else if (selectedApiType === 'rest') {
+                        const restBaseUrl = endpointInput.value.trim(); // Get base URL from the input for REST
+                        if (!restBaseUrl) {
+                            resultDisplay.textContent = 'Please provide a REST API base URL.';
+                            resultDisplay.classList.add('error');
+                            return;
+                        }
+                        const endpointConfig = restApiEndpoints["list_servers"]; // Hardcoded to list_servers
+                        const paramsData = {};
+                        endpointConfig.params.forEach(param => {
+                            const inputEl = document.getElementById(`param-${param.name}`);
+                            if (inputEl) {
+                                paramsData[param.name] = inputEl.value.trim();
+                                if (param.required && !paramsData[param.name]) {
+                                    throw new Error(`Required parameter "${param.name}" is missing.`);
+                                }
+                            }
+                        });
+                        // Add software from the shared dropdown for REST calls
+                        const selectedSoftwareRadioRest = document.querySelector('input[name="sharedSoftware"]:checked');
+                        paramsData.software = selectedSoftwareRadioRest ? selectedSoftwareRadioRest.value : "gancio"; // Default to gancio if somehow none selected
+                        let rawRestResponse = await fetchRESTData(restBaseUrl, endpointConfig, paramsData);
+                        let result = rawRestResponse.data; // Data from the first page
+                        // Initialize currentJsonResult with the first page's data, so it's an array for .concat
+                        currentJsonResult = Array.isArray(result) ? result : (result ? [result] : []);
+
+                        nextCursor = rawRestResponse.meta?.next_cursor;
+                        if (nextCursor && rawRestResponse.meta && rawRestResponse.meta.per_page !== undefined) {
+                            currentLimitForPagination = rawRestResponse.meta.per_page;
+                        } else {
+                            currentLimitForPagination = null;
+                        }
+
+                        // Auto-fetch subsequent pages for REST
+                        if (selectedApiType === 'rest' && nextCursor) {
+                            resultDisplay.textContent = `Fetched ${currentJsonResult.length} items. Fetching subsequent pages...`;
+                            saveButton.disabled = true; // Keep save disabled until all pages are fetched
+
+                            while (nextCursor) {
+                                await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+
+                                const selectedSoftwareRadioPagination = document.querySelector('input[name="sharedSoftware"]:checked');
+                                const nextPageParams = {
+                                    software: selectedSoftwareRadioPagination ? selectedSoftwareRadioPagination.value : "gancio",
+                                    cursor: nextCursor,
+                                };
+                                if (currentLimitForPagination !== null) {
+                                    nextPageParams.limit = currentLimitForPagination;
+                                }
+
+                                resultDisplay.textContent = `Fetched ${currentJsonResult.length} items. Fetching next page (cursor: ${nextCursor.substring(0,10)}...)...`;
+
+                                rawRestResponse = await fetchRESTData(restBaseUrl, endpointConfig, nextPageParams);
+                                const newPageData = Array.isArray(rawRestResponse.data) ? rawRestResponse.data : (rawRestResponse.data ? [rawRestResponse.data] : []);
+                                currentJsonResult = currentJsonResult.concat(newPageData);
+
+                                nextCursor = rawRestResponse.meta?.next_cursor;
+                                if (nextCursor && rawRestResponse.meta && rawRestResponse.meta.per_page !== undefined) {
+                                    currentLimitForPagination = rawRestResponse.meta.per_page;
+                                } else {
+                                    currentLimitForPagination = null; // Stop if no more cursor or per_page info
+                                }
+                            }
+                        }
+                    }
+                    
+                    // This block handles UI updates based on whether data was fetched.
+                    if (currentJsonResult && (Array.isArray(currentJsonResult) ? currentJsonResult.length > 0 : Object.keys(currentJsonResult).length > 0 )) {
+                        saveButton.disabled = false;
+                        // Visibility of fieldFilterControlsContainer (REST filters) is handled by toggleGraphQLFields.
+                        // Visibility of graphqlFieldFilterControlsContainer depends on API type AND data presence.
+                        if (selectedApiType === 'graphql') {
+                            graphqlFieldFilterControlsContainer.style.display = 'block';
+                        } else {
+                            graphqlFieldFilterControlsContainer.style.display = 'none'; // Ensure it's hidden if REST is selected
+                        }
+
+                        resultDisplay.textContent = "Processing data..."; // Generic message before final rendering
+                    } else {
+                        // No results or empty result
+                        saveButton.disabled = true;
+                        // fieldFilterControlsContainer visibility is handled by toggleGraphQLFields.
+                        graphqlFieldFilterControlsContainer.style.display = 'none';
+                        if (!resultDisplay.classList.contains('error')) { // Don't overwrite an existing error message
+                           resultDisplay.textContent = 'No results found.';
+                        }
+                    }
+                } catch (error) {
+                    resultDisplay.textContent = `Error: ${error.message}`;
+                    resultDisplay.classList.add('error');
+                    saveButton.disabled = true;
+                    currentJsonResult = null; // Clear any partial results
+                    // Hide filter controls on error
+                    graphqlFieldFilterControlsContainer.style.display = 'none';
+                } finally {
+                    // updateDisplay will call getFilteredJson (which now handles GraphQL filtering)
+                    // and then syntaxHighlightJson. This handles both REST and GraphQL.
+                    updateDisplay();
+                }
+                setTimeout(drawConnectingLines, 50); // Redraw lines after query execution and UI updates
+            });
+
+            saveButton.addEventListener('click', () => {
+                if (currentJsonResult) {
+                    const dataToSave = getFilteredJson(currentJsonResult);
+
+                    // 1. Get Date
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+                    const day = String(today.getDate()).padStart(2, '0');
+                    const dateString = `${year}${month}${day}`;
+
+                    // 2. Get Source Name
+                    const selectedApiType = document.querySelector('input[name="apiType"]:checked').value;
+                    const sourceName = selectedApiType === 'rest' ? 'fedidb' : 'observer';
+
+                    // 3. Get Software Name
+                    const selectedSoftware = document.querySelector('input[name="sharedSoftware"]:checked').value;
+                    const filename = `${dateString}_${sourceName}_${selectedSoftware}.json`;
+                    saveJSON(dataToSave, filename);
+                } else {
+                    resultDisplay.textContent = 'No result to save. Please execute a query first.';
+                    resultDisplay.classList.add('error');
+                }
+            });
+
+            async function fetchObserverDomainsForCombine(softwareName) {
+                const query = `query q_combine_observer { nodes(softwarename: "${softwareName}") { domain } }`;
+                const graphQLEndpoint = "https://api.fediverse.observer/instances";
+                try {
+                    const response = await fetchGraphQLData(graphQLEndpoint, query);
+                    if (response && response.data && response.data.nodes) {
+                        return response.data.nodes.map(node => node.domain).filter(domain => domain); // Filter out null/undefined domains
+                    }
+                    console.warn("Observer combine fetch: No data.nodes in response", response);
+                    return [];
+                } catch (error) {
+                    console.error("Error fetching Observer domains for combine:", error);
+                    resultDisplay.innerHTML += `<br><span class="error">Error fetching Observer data for combine: ${error.message}</span>`;
+                    return [];
+                }
+            }
+
+            async function fetchFediDbDomainsForCombine(softwareName) {
+                const domains = [];
+                const restBaseUrl = endpointInput.value.trim();
+                if (!restBaseUrl) {
+                    console.error("FediDB base URL missing for combine.");
+                    resultDisplay.innerHTML += `<br><span class="error">FediDB base URL missing for combine.</span>`;
+                    return [];
+                }
+                const endpointConfig = restApiEndpoints["list_servers"];
+                let tempNextCursor = null;
+                let tempCurrentLimitPerPage = "50"; // Default limit, API might override with per_page
+
+                let initialParams = { software: softwareName, limit: tempCurrentLimitPerPage };
+                
+                try {
+                    resultDisplay.textContent = `Combining: Fetching FediDB page 1 for ${softwareName}...`;
+                    let rawResponse = await fetchRESTData(restBaseUrl, endpointConfig, initialParams);
+                    if (rawResponse.data) {
+                        rawResponse.data.forEach(item => { if (item.domain) domains.push(item.domain); });
+                    }
+                    tempNextCursor = rawResponse.meta?.next_cursor;
+                    if (rawResponse.meta?.per_page) tempCurrentLimitPerPage = String(rawResponse.meta.per_page);
+
+                    let pageNum = 1;
+                    while (tempNextCursor) {
+                        pageNum++;
+                        resultDisplay.textContent = `Combining: Fetching FediDB page ${pageNum} for ${softwareName} (total: ${domains.length})...`;
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Rate limit
+                        
+                        const nextPageParams = {
+                            software: softwareName,
+                            cursor: tempNextCursor,
+                            limit: tempCurrentLimitPerPage
+                        };
+                        rawResponse = await fetchRESTData(restBaseUrl, endpointConfig, nextPageParams);
+                        if (rawResponse.data) {
+                            rawResponse.data.forEach(item => { if (item.domain) domains.push(item.domain); });
+                        }
+                        tempNextCursor = rawResponse.meta?.next_cursor;
+                        if (rawResponse.meta?.per_page) tempCurrentLimitPerPage = String(rawResponse.meta.per_page);
+                    }
+                    return domains;
+                } catch (error) {
+                    console.error("Error fetching FediDB domains for combine:", error);
+                    resultDisplay.innerHTML += `<br><span class="error">Error fetching FediDB data for combine: ${error.message}</span>`;
+                    return domains; // Return whatever was fetched before error
+                }
+            }
+
+            async function handleCombineAction() {
+                resultDisplay.textContent = "Starting combine operation...";
+                combineButton.disabled = true;
+                executeButton.disabled = true; // Disable other actions
+
+                const selectedSoftware = document.querySelector('input[name="sharedSoftware"]:checked').value;
+
+                const observerDomains = await fetchObserverDomainsForCombine(selectedSoftware);
+                resultDisplay.textContent = `Fetched ${observerDomains.length} domains from Observer. Now fetching from FediDB...`;
+                
+                const fediDbDomains = await fetchFediDbDomainsForCombine(selectedSoftware);
+                resultDisplay.textContent = `Fetched ${fediDbDomains.length} domains from FediDB. Combining and de-duplicating...`;
+
+                const allDomains = new Set([...observerDomains, ...fediDbDomains]);
+                const combinedOutput = Array.from(allDomains).map(domain => ({ domain })).sort((a, b) => a.domain.localeCompare(b.domain));
+
+                const today = new Date();
+                const dateString = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+                const filename = `${dateString}_combined_${selectedSoftware}.json`;
+                saveJSON(combinedOutput, filename);
+                resultDisplay.innerHTML = `Combined ${combinedOutput.length} unique domains from Observer and FediDB for '${selectedSoftware}'.<br>Saved as ${filename}.`;
+                combineButton.disabled = false;
+                executeButton.disabled = false;
+            }
+
+            function renderRestParams() {
+                restParamsContainer.innerHTML = ''; // Clear previous params
+                const apiTypeIsRest = document.getElementById('apiTypeREST').checked;
+
+                if (apiTypeIsRest && restApiEndpoints["list_servers"]) { // Always use "list_servers" for REST
+                    const endpoint = restApiEndpoints["list_servers"];
+
+                    endpoint.params.forEach(param => {
+                        // Skip generating a select for 'software' as it's now a shared dropdown
+                        if (param.name === 'software') return;
+
+                        const paramLabel = document.createElement('label');
+                        paramLabel.setAttribute('for', `param-${param.name}`);
+                        let labelText = param.name;
+                        if (param.type !== 'select') { // Don't show type for select
+                            labelText += ` (${param.type})`;
+                        }
+                        labelText += `${param.required ? '*' : ''}:`;
+                        paramLabel.textContent = labelText;
+                        
+                        let paramInput;
+                        if (param.type === 'select' && param.options) {
+                            paramInput = document.createElement('select');
+                            paramInput.id = `param-${param.name}`;
+                            paramInput.name = param.name;
+                            if (param.placeholder) {
+                                const placeholderOption = document.createElement('option');
+                                placeholderOption.value = "";
+                                placeholderOption.textContent = param.placeholder;
+                                placeholderOption.disabled = true;
+                                placeholderOption.selected = true;
+                                paramInput.appendChild(placeholderOption);
+                            }
+                            param.options.forEach(optValue => {
+                                const option = document.createElement('option');
+                                option.value = optValue;
+                                option.textContent = optValue;
+                                paramInput.appendChild(option);
+                            });
+                            // Defaulting for 'software' is handled by the shared dropdown itself
+                        } else if (param.name === 'cursor') { 
+                            paramInput = document.createElement('input');
+                            paramInput.readOnly = true; 
+                            paramInput.type = 'text'; // Ensure it's text even if readonly
+                            paramInput.id = `param-${param.name}`;
+                            paramInput.name = param.name;
+                            paramInput.placeholder = param.placeholder || `Enter ${param.name}`;
+                        } else {
+                            paramInput = document.createElement('input');
+                            paramInput.type = 'text';
+                            paramInput.id = `param-${param.name}`;
+                            paramInput.name = param.name;
+                            paramInput.placeholder = param.placeholder || `Enter ${param.name}`;
+                            if (param.required) paramInput.required = true;
+                        }
+
+                        restParamsContainer.appendChild(paramLabel);
+                        restParamsContainer.appendChild(paramInput);
+                    });
+                }
+            }
+            function renderFieldFilterControls() {
+                fieldFilterControlsDiv.innerHTML = ''; // Clear existing controls
+                filterableFields.forEach(field => {
+                    const checkboxId = `filter-${field}`;
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = checkboxId;
+                    checkbox.value = field;
+                    checkbox.checked = (field === "domain"); // Default "domain" to checked, others unchecked
+                    checkbox.addEventListener('change', () => {
+                        updateDisplay();
+                        drawConnectingLines();
+                    });
+
+                    const label = document.createElement('label');
+                    label.htmlFor = checkboxId;
+                    label.textContent = field;
+
+                    fieldFilterControlsDiv.appendChild(checkbox);
+                    fieldFilterControlsDiv.appendChild(label);
+                });
+            }
+
+            // Initial setup calls after all functions are defined
+            renderRestParams(); // Call the globally exposed version
+            
+            // Setup listeners for API type changes to redraw lines
+            apiTypeRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    // toggleGraphQLFields and renderRestParams are called by inline onchange
+                    // We need lines drawn after those potentially layout-affecting changes.
+                    setTimeout(drawConnectingLines, 100); // Increased delay slightly for safety
+                });
+            });
+
+            window.addEventListener('resize', drawConnectingLines);
+            toggleGraphQLFields(document.getElementById('apiTypeGraphQL').checked);
+            setTimeout(drawConnectingLines, 100); // Initial draw after setup
+
+            function renderGraphQLFieldFilterControls() {
+                graphqlFieldFilterControlsDiv.innerHTML = ''; // Clear existing controls
+                graphqlFilterableFields.forEach(field => {
+                    const checkboxId = `gql-filter-${field}`;
+                    
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = checkboxId;
+                    checkbox.value = field;
+                    checkbox.checked = (field === "domain"); // Default "domain" to checked, others unchecked
+                    checkbox.addEventListener('change', () => {
+                        updateDisplay();
+                        drawConnectingLines();
+                    });
+
+                    const label = document.createElement('label');
+                    label.htmlFor = checkboxId;
+                    label.textContent = field;
+
+                    graphqlFieldFilterControlsDiv.appendChild(checkbox);
+                    graphqlFieldFilterControlsDiv.appendChild(label);
+                });
+            }
+
+            if (combineButton) {
+                combineButton.addEventListener('click', handleCombineAction);
+            }
+        });
+    </script>
+</body>
+</html>
