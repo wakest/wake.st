@@ -1,6 +1,0 @@
-{
-  "name": "Gancio Event Viewer",
-  "description": "A web application to browse and view events from a Gancio API instance, displayed in a clean and minimal interface.",
-  "requestFramePermissions": [],
-  "prompt": ""
-}
