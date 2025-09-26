@@ -3,3 +3,4 @@
 2025-09-15T16:16:28+02:00	hello @zvava@f.619.hu, funny that you found this here little feed!
 2025-09-16T20:03:02+02:00   having a really hard time getting my mind clear and focusing on anything...
 2025-09-17T00:26:44+02:00   I just "installed" phanpy on my website and it worked cause its compleatly static!
+2025-09-25T19:30:06+02:00   was looking into @zvava's new twtxt software [bombycilla](https://g.619.hu/zvava/bbycll) a bit more after they dm'd me randomly reminding me I had this feed.
