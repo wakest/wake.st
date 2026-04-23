@@ -1,0 +1,23 @@
+{
+  "aliases": [
+    "https://social.wake.st/@liaizon",
+    "https://social.wake.st/users/liaizon"
+  ],
+  "links": [
+    {
+      "href": "https://social.wake.st/@liaizon",
+      "rel": "http://webfinger.net/rel/profile-page",
+      "type": "text/html"
+    },
+    {
+      "href": "https://social.wake.st/users/liaizon",
+      "rel": "self",
+      "type": "application/activity+json"
+    },
+    {
+      "rel": "http://ostatus.org/schema/1.0/subscribe",
+      "template": "https://social.wake.st/@liaizon/authorize_interaction?uri={uri}"
+    }
+  ],
+  "subject": "acct:liaizon@wake.st"
+}
