@@ -1,0 +1,121 @@
+<html>
+    <head>
+        <style>
+html
+{
+    overflow: hidden;}
+body {
+    background-image: linear-gradient(orange, red, pink, red, purple, purple, orange);
+}
+marquee {
+    font-size: 20pt;
+    direction: ltr;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    border: solid 1px;
+    border-radius: 50px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    background-color: rgba(0, 0, 0, 0.448);
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+marquee:hover {
+    background-color: rgba(255, 255, 255, 0.506);
+}
+
+a {
+    text-decoration-color: red ;
+    font-family: 'Times New Roman', Times, serif;
+    text-shadow: 2px 2px 10px rgb(0, 0, 255);
+}
+p {
+    padding: 0;
+    margin: 0;
+    text-shadow: 2px 2px 20px white;
+}
+.hello {
+    color: greenyellow;
+}
+.normal {
+    color: yellow;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.what {
+    color: royalblue;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+.bye {
+    color: wheat;
+
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+.miss {
+    color: rebeccapurple;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+.coolcircle {
+    width: 300px;
+    left: 50%;
+    top: -20%;
+    position: relative;
+    transform: translate(-50%);
+    box-shadow: 0px 0px 20px rgb(255, 0, 0);
+    border-radius: 100%;
+    
+}
+.circle-container {
+    width: 100vw;
+    padding-top: 30px;
+}
+.circle{
+    top: 25%;
+    width: 200px;
+    border-radius: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 200px;
+    border: solid 1px white;
+    background-image: linear-gradient(
+        pink,
+        red,
+        orange,
+        pink);
+        filter: invert(90%);
+}
+.dottt
+{
+    font-size: 300px;
+    color: rgba(255, 0, 0, 0.364);
+    position: absolute;
+    left: 43%;
+    top: 10px;
+    box-shadow: 0px 0px 50px rgb(255, 255, 255);
+    border-radius: 100%;
+    height: 100px;
+    width: 100px;
+    filter: blur(5px);
+}
+</style>
+</head>
+<body>
+
+<div class="circle-container"><div class="circle"></div></div>
+<marquee scrollamount="10" class="hello"><p>hello world</p></marquee>
+<marquee scrollamount="12" class="normal"><p>what is the <a href="https://info.cern.ch/WWW">world wide web?</a></p></marquee>
+<marquee scrollamount="14" class="what"><p>is this what it was for?</p></marquee>
+<marquee scrollamount="16" class="bye"><p>goodbye world</p></marquee>
+<marquee scrollamount="18" class="miss"><p>we will miss you!</p></marquee>
+<div class="dottt">•</div>
+
+<div class="coolcircle">
+<svg width="300px" height="300px" fill="none">
+<circle cx="150px" cy="150px" r="50px" stroke=white />
+</svg>
+</div>
+
+
+</body>
+</html>
