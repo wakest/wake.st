@@ -1,0 +1,66 @@
+
+html
+{
+    background-color: darkolivegreen;
+    background-image: linear-gradient(darkolivegreen, darkolivegreen, rgb(63, 80, 35));
+    color: antiquewhite;
+}
+a
+{
+    color: darkblue;
+}
+
+p {
+    font-size: 16pt;
+}
+
+h1, h2, h3, p{
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+header
+{ padding: 10% 10% 0% 10%;}
+h1, h2{
+    filter: blur(1px) url(#filter);
+    letter-spacing: 2px;
+}
+article
+{
+    padding-top:    10%;
+    padding-bottom: 10%;
+    padding-left:   10%;
+    padding-right:  10%;
+}
+h2 {
+    font-style: oblique;
+
+}
+a {
+    border-bottom:1px solid rgba(250, 235, 215, 0.305);
+    display: inline-block;
+    position: relative;
+    text-decoration: none;
+}
+
+.byline
+{
+    margin-top: -15px;
+}
+
+a:hover
+{
+    filter: blur(1px)
+}
+asterism-symbol
+{
+    font-size: 30pt;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    filter: blur(1px) url(#filter);
+}
+
+svg {
+    position: absolute;
+    top: 0;
+}
