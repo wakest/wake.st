@@ -18,17 +18,22 @@ h1, h2, h3, p{
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 header
-{ padding: 10% 10% 0% 10%;}
+{
+    padding-top:    100px;
+    padding-bottom: 100px;
+    padding-left:   20%;
+    padding-right:  20%;
+}
 h1, h2{
     filter: blur(1px) url(#filter);
     letter-spacing: 2px;
 }
 article
 {
-    padding-top:    10%;
-    padding-bottom: 10%;
-    padding-left:   10%;
-    padding-right:  10%;
+    padding-top:    0%;
+    padding-bottom: 100px;
+    padding-left:   20%;
+    padding-right:  20%;
 }
 h2 {
     font-style: oblique;
@@ -58,6 +63,7 @@ asterism-symbol
     align-items: center;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     filter: blur(1px) url(#filter);
+    padding-bottom: 100px;
 }
 
 svg {
