@@ -1,5 +1,10 @@
+html {
+  overflow-x: hidden;
+  overscroll-behavior-y: none;
+}
 
-html
+
+body
 {
     background-color: darkolivegreen;
     background-image: linear-gradient(darkolivegreen, darkolivegreen, rgb(63, 80, 35));
@@ -20,7 +25,7 @@ h1, h2, h3, p{
 header
 {
     padding-top:    100px;
-    padding-bottom: 100px;
+    padding-bottom: 0px;
     padding-left:   20%;
     padding-right:  20%;
 }
@@ -30,11 +35,25 @@ h1, h2{
 }
 article
 {
-    padding-top:    0%;
+    padding-top:    100px;
     padding-bottom: 100px;
     padding-left:   20%;
     padding-right:  20%;
 }
+
+article:target
+{
+    background-image: radial-gradient(rgba(255, 255, 255, 0.120), rgba(0, 0, 0, 0), rgba(0, 0, 0, 0));
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.headeranchor
+{
+    color: antiquewhite;
+}
+
 h2 {
     font-style: oblique;
 
@@ -53,7 +72,7 @@ a {
 
 a:hover
 {
-    filter: blur(1px)
+    filter: blur(2px)
 }
 asterism-symbol
 {
@@ -63,7 +82,6 @@ asterism-symbol
     align-items: center;
     font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     filter: blur(1px) url(#filter);
-    padding-bottom: 100px;
 }
 
 svg {
