@@ -31,7 +31,7 @@ h2 a {
     font-size: 19pt;
 }
 
-h1, h2, h3, p, a {
+h1, h2, h3, p, a, article {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 header
