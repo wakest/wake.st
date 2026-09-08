@@ -19,7 +19,19 @@ p {
     font-size: 16pt;
 }
 
-h1, h2, h3, p{
+h1 {
+    font-size: 26pt;
+}
+
+h2 {
+    font-size: 19pt;
+}
+
+h2 a {
+    font-size: 19pt;
+}
+
+h1, h2, h3, p, a {
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 header
